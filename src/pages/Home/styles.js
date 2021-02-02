@@ -1,3 +1,4 @@
+import { FaSignOutAlt } from "react-icons/fa";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -17,6 +18,7 @@ export const Header = styled.header`
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   background-color: var(--primary);
   border-bottom: 1px solid var(--darkGray);
@@ -25,7 +27,7 @@ export const Header = styled.header`
 `;
 
 export const Content = styled.div`
-  width: 100%;
+  width: 1280px;
   padding-top: 60px;
 
   display: grid;
@@ -56,12 +58,17 @@ export const FeedContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 10px;
 
-  padding-top: 10px;
+  overflow-y: auto;
+
+  padding-top: 10px 0px;
 `;
 
 export const ActionsContainer = styled.div`
   margin-top: 10px;
+
+  text-align: center;
 `;
 
 export const QuestionCard = styled.article`
@@ -105,5 +112,91 @@ export const QuestionCard = styled.article`
       max-width: 100%;
       align-self: center;
     }
+  }
+
+  > footer {
+    margin-top: 10px;
+
+    > h1 {
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2;
+
+      :hover {
+        color: var(--primary);
+      }
+    }
+
+    > section {
+      margin-top: 10px;
+      border-radius: 4px;
+      padding: 5px;
+
+      background-color: var(--dark);
+
+      > header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        > img {
+          width: 30px;
+          height: 30px;
+          border-radius: 15px;
+        }
+      }
+
+      > p {
+        margin-top: 5px;
+        width: 100%;
+        padding: 10px 5px;
+
+        border-left: 2px solid var(--primary);
+      }
+    }
+
+    > form {
+      width: 100%;
+      margin-top: 5px;
+
+      display: flex;
+      gap: 5px;
+
+      > textarea {
+        flex: 1;
+      }
+    }
+  }
+`;
+
+export const Logo = styled.img`
+  width: 60px;
+  height: 60px;
+
+  margin: 20px;
+  margin-top: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--dark);
+
+  box-shadow: 0px 0px 5px var(--dark);
+
+  cursor: pointer;
+  transition: 0.2s;
+
+  :hover {
+    transform: scale(1.1);
+    box-shadow: 0px 0px 15px var(--dark);
+  }
+`;
+
+export const IconSignOut = styled(FaSignOutAlt)`
+  font-size: 30px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  :hover {
+    color: var(--dark);
   }
 `;
