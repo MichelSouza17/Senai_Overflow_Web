@@ -14,7 +14,7 @@ import {
 import imgProfile from "../../assets/foto_perfil.png";
 import logo from "../../assets/logo.png";
 import { api } from "../../services/api";
-import { signOut } from "../../services/security";
+import { signOut, getUser } from "../../services/security";
 import { useHistory } from "react-router-dom";
 
 function Profile() {
@@ -41,6 +41,44 @@ function Profile() {
 }
 
 function Question({ question }) {
+  const [showAnswers, setShowAnswers] = useState(false);
+
+  const [newAnswer, setNewAnswer] = useState("");
+
+  const [answers, setAnswers] = useState(question.Answers);
+
+  const qtdAnswers = answers.length;
+
+  const handleAddAnswer = async (e) => {
+    e.preventDefault();
+
+    if (newAnswer.length < 10)
+      return alert("A resposta deve ter no mínimo 10 caracteres");
+
+    try {
+      const response = await api.post(`/questions/${question.id}/answers`, {
+        description: newAnswer,
+      });
+
+      const aluno = getUser();
+
+      const answerAdded = {
+        id: response.data.id,
+        description: newAnswer,
+        created_at: response.data.created_at,
+        Student: {
+          id: aluno.studentId,
+          name: aluno.name,
+        },
+      };
+
+      setAnswers([...answers, answerAdded]);
+
+      setNewAnswer("");
+    } catch (error) {
+      alert(error);
+    }
+  };
   return (
     <QuestionCard>
       <header>
@@ -51,20 +89,41 @@ function Question({ question }) {
       <section>
         <strong>{question.title}</strong>
         <p>{question.description}</p>
-        <img src={question.image} />
+        <img src={question.image}></img>
       </section>
       <footer>
-        <h1>11 Respostas</h1>
-        <section>
-          <header>
-            <img src={imgProfile} />
-            <strong>por Fulano</strong>
-            <p>30/01/2021 as 19:00</p>
-          </header>
-          <p>Resposta para a pergunta.</p>
-        </section>
-        <form>
-          <textarea placeholder="Responda essa dúvida!" required></textarea>
+        <h1 onClick={() => setShowAnswers(!showAnswers)}>
+          {qtdAnswers === 0 ? (
+            "Seja o primeiro a responder"
+          ) : (
+            <>
+              {qtdAnswers}
+              {qtdAnswers > 1 ? " Respostas " : " Resposta "}
+            </>
+          )}
+        </h1>
+        {showAnswers && (
+          <>
+            {answers.map((answer) => (
+              <section>
+                <header>
+                  <img src={imgProfile} />
+                  <strong>por {answer.Student.name}</strong>
+                  <p>{answer.created_at}</p>
+                </header>
+                <p>{answer.description}</p>
+              </section>
+            ))}
+          </>
+        )}
+        <form onSubmit={handleAddAnswer}>
+          <textarea
+            placeholder="Responda essa dúvida!"
+            onChange={(e) => setNewAnswer(e.target.value)}
+            required
+          >
+            {newAnswer}
+          </textarea>
           <button>Enviar</button>
         </form>
       </footer>
