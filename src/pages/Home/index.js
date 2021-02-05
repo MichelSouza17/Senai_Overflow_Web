@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { format } from "date-fns";
 import {
   Container,
   Header,
@@ -11,13 +13,18 @@ import {
   IconSignOut,
 } from "./styles";
 
+import Input from "../../components/Input";
 import imgProfile from "../../assets/foto_perfil.png";
 import logo from "../../assets/logo.png";
 import { api } from "../../services/api";
-import { signOut, getUser } from "../../services/security";
-import { useHistory } from "react-router-dom";
+import { getUser, signOut } from "../../services/security";
+import Modal from "../../components/Modal";
+import { FormNewQuestion } from "../Home/styles";
+import Select from "../../components/Select";
+import Tag from "../../components/Tag";
 
 function Profile() {
+  const student = getUser();
   return (
     <>
       <section>
@@ -25,18 +32,38 @@ function Profile() {
         <a href="#">Editar Foto</a>
       </section>
       <section>
-        <strong>Nome:</strong>
-        <p>Fulano de Tal</p>
+        <strong>NOME:</strong>
+        <p>{student.name}</p>
       </section>
       <section>
         <strong>RA:</strong>
-        <p>12345678</p>
+        <p>{student.ra}</p>
       </section>
       <section>
         <strong>E-MAIL:</strong>
-        <p>Fulano@gmail.com</p>
+        <p>{student.email}</p>
       </section>
     </>
+  );
+}
+
+function Answer({ answer }) {
+  const student = getUser();
+
+  return (
+    <section>
+      <header>
+        <img src={imgProfile} />
+        <strong>
+          por{" "}
+          {student.studentId === answer.Student.id
+            ? "Você"
+            : answer.Student.name}
+        </strong>
+        <p> {format(new Date(answer.created_at), "dd/MM/yyyy 'ás' HH:mm")}</p>
+      </header>
+      <p>{answer.description}</p>
+    </section>
   );
 }
 
@@ -65,7 +92,7 @@ function Question({ question }) {
       const answerAdded = {
         id: response.data.id,
         description: newAnswer,
-        created_at: response.data.created_at,
+        created_at: response.data.createdAt,
         Student: {
           id: aluno.studentId,
           name: aluno.name,
@@ -79,17 +106,27 @@ function Question({ question }) {
       alert(error);
     }
   };
+
+  const student = getUser();
+
   return (
     <QuestionCard>
       <header>
-        <img src={imgProfile} />
-        <strong>por {question.Student.name}</strong>
-        <p>em {question.created_at}</p>
+        <img src={imgProfile} alt="Imagem de perfil" />
+        <strong>
+          por{" "}
+          {student.studentId === question.Student.id
+            ? "Você"
+            : question.Student.name}
+        </strong>
+        <p>
+          em {format(new Date(question.created_at), "dd/MM/yyyy 'ás' HH:mm")}
+        </p>
       </header>
       <section>
         <strong>{question.title}</strong>
         <p>{question.description}</p>
-        <img src={question.image}></img>
+        <img src={question.image} />
       </section>
       <footer>
         <h1 onClick={() => setShowAnswers(!showAnswers)}>
@@ -98,32 +135,25 @@ function Question({ question }) {
           ) : (
             <>
               {qtdAnswers}
-              {qtdAnswers > 1 ? " Respostas " : " Resposta "}
+              {qtdAnswers > 1 ? " Respostas" : " Resposta"}
             </>
           )}
         </h1>
         {showAnswers && (
           <>
             {answers.map((answer) => (
-              <section>
-                <header>
-                  <img src={imgProfile} />
-                  <strong>por {answer.Student.name}</strong>
-                  <p>{answer.created_at}</p>
-                </header>
-                <p>{answer.description}</p>
-              </section>
+              <Answer answer={answer} />
             ))}
           </>
         )}
         <form onSubmit={handleAddAnswer}>
           <textarea
+            minLength={10}
             placeholder="Responda essa dúvida!"
             onChange={(e) => setNewAnswer(e.target.value)}
             required
-          >
-            {newAnswer}
-          </textarea>
+            value={newAnswer}
+          ></textarea>
           <button>Enviar</button>
         </form>
       </footer>
@@ -131,10 +161,49 @@ function Question({ question }) {
   );
 }
 
+function NewQuestion() {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await api.get("/categories");
+
+        setCategories(response.data);
+      } catch (error) {
+        alert(error);
+      }
+    };
+
+    loadCategories();
+  }, []);
+  return (
+    <FormNewQuestion>
+      <Input id="title" label="Título" />
+      <Input id="description" label="Descrição" />
+      <Input id="gist" label="Gist" />
+      <Select id="categories" label="Categorias">
+        <option value="">Selecione</option>
+        {categories.map((c) => (
+          <option value={c.id}>{c.description}</option>
+        ))}
+      </Select>
+      <div>
+        <Tag info="Backend"></Tag>
+        <Tag info="Banco de Dados"></Tag>
+      </div>
+      <input type="file" />
+      <button>Enviar</button>
+    </FormNewQuestion>
+  );
+}
+
 function Home() {
   const history = useHistory();
 
   const [questions, setQuestions] = useState([]);
+
+  const [reload, setReload] = useState(null);
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -144,33 +213,43 @@ function Home() {
     };
 
     loadQuestions();
-  }, []);
+  }, [reload]);
 
   const handleSignOut = () => {
     signOut();
 
     history.replace("/");
   };
+
+  const handleReload = () => {
+    setReload(Math.random());
+  };
+
   return (
-    <Container>
-      <Header>
-        <Logo src={logo} />
-        <IconSignOut onClick={handleSignOut} />
-      </Header>
-      <Content>
-        <ProfileContainer>
-          <Profile />
-        </ProfileContainer>
-        <FeedContainer>
-          {questions.map((q) => (
-            <Question question={q} />
-          ))}
-        </FeedContainer>
-        <ActionsContainer>
-          <button>Fazer uma pergunta</button>
-        </ActionsContainer>
-      </Content>
-    </Container>
+    <>
+      <Modal title="Faça uma pergunta">
+        <NewQuestion />
+      </Modal>
+      <Container>
+        <Header>
+          <Logo src={logo} onClick={handleReload} />
+          <IconSignOut onClick={handleSignOut} />
+        </Header>
+        <Content>
+          <ProfileContainer>
+            <Profile />
+          </ProfileContainer>
+          <FeedContainer>
+            {questions.map((q) => (
+              <Question question={q} />
+            ))}
+          </FeedContainer>
+          <ActionsContainer>
+            <button>Fazer uma pergunta</button>
+          </ActionsContainer>
+        </Content>
+      </Container>
+    </>
   );
 }
 
