@@ -22,6 +22,7 @@ import Modal from "../../components/Modal";
 import { FormNewQuestion } from "../Home/styles";
 import Select from "../../components/Select";
 import Tag from "../../components/Tag";
+import Loading from "../../components/Loading";
 
 function Profile() {
   const student = getUser();
@@ -67,7 +68,7 @@ function Answer({ answer }) {
   );
 }
 
-function Question({ question }) {
+function Question({ question, setIsLoading }) {
   const [showAnswers, setShowAnswers] = useState(false);
 
   const [newAnswer, setNewAnswer] = useState("");
@@ -85,6 +86,8 @@ function Question({ question }) {
 
     if (newAnswer.length < 10)
       return alert("A resposta deve ter no mínimo 10 caracteres");
+
+    setIsLoading(true);
 
     try {
       const response = await api.post(`/questions/${question.id}/answers`, {
@@ -106,8 +109,11 @@ function Question({ question }) {
       setAnswers([...answers, answerAdded]);
 
       setNewAnswer("");
+
+      setIsLoading(false);
     } catch (error) {
       alert(error);
+      setIsLoading(false);
     }
   };
 
@@ -165,7 +171,7 @@ function Question({ question }) {
   );
 }
 
-function NewQuestion({ handleReload }) {
+function NewQuestion({ handleReload, setIsLoading }) {
   const [newQuestion, setNewQuestion] = useState({
     title: "",
     description: "",
@@ -248,6 +254,8 @@ function NewQuestion({ handleReload }) {
     if (image) data.append("image", image);
     if (newQuestion.gist) data.append("gist", newQuestion.gist);
 
+    setIsLoading(true);
+
     try {
       await api.post("./questions", data, {
         headers: {
@@ -258,6 +266,7 @@ function NewQuestion({ handleReload }) {
       handleReload();
     } catch (error) {
       alert(error);
+      setIsLoading(false);
     }
   };
 
@@ -313,6 +322,8 @@ function NewQuestion({ handleReload }) {
 function Home() {
   const history = useHistory();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [questions, setQuestions] = useState([]);
 
   const [reload, setReload] = useState(null);
@@ -321,9 +332,12 @@ function Home() {
 
   useEffect(() => {
     const loadQuestions = async () => {
+      setIsLoading(true);
       const response = await api.get("/feed");
 
       setQuestions(response.data);
+
+      setIsLoading(false);
     };
 
     loadQuestions();
@@ -342,12 +356,16 @@ function Home() {
 
   return (
     <>
+      {isLoading && <Loading />}
       {showNewQuestion && (
         <Modal
           title="Faça uma pergunta"
           handleClose={() => setShowNewQuestion(false)}
         >
-          <NewQuestion handleReload={handleReload} />
+          <NewQuestion
+            handleReload={handleReload}
+            setIsLoading={setIsLoading}
+          />
         </Modal>
       )}
       <Container>
@@ -361,7 +379,7 @@ function Home() {
           </ProfileContainer>
           <FeedContainer>
             {questions.map((q) => (
-              <Question question={q} />
+              <Question question={q} setIsLoading={setIsLoading} />
             ))}
           </FeedContainer>
           <ActionsContainer>
