@@ -14,6 +14,8 @@ import {
   IconSignOut,
   GistIcon,
   ContainerGist,
+  FormSearch,
+  InputSearch,
 } from "./styles";
 
 import Input from "../../components/Input";
@@ -27,7 +29,7 @@ import Select from "../../components/Select";
 import Tag from "../../components/Tag";
 import Loading from "../../components/Loading";
 import { validSquaredImage } from "../../utils";
-import { FaGithub } from "react-icons/fa";
+import { FaGitHub } from "react-icons/fa";
 
 function Profile({ setIsLoading, handleReload, setMessage }) {
   const [student, setStudent] = useState(getUser());
@@ -179,7 +181,7 @@ function Question({ question, setIsLoading, setCurrentGist }) {
       <section>
         <strong>{question.title}</strong>
         <p>{question.description}</p>
-        <img src={question.image} alt="Imagem de Perfil" />
+        <img src={question.image} />
       </section>
       <footer>
         <h1 onClick={() => setShowAnswers(!showAnswers)}>
@@ -377,6 +379,7 @@ function Gist({ gist, handleClose }) {
     );
   } else return null;
 }
+
 function Home() {
   const history = useHistory();
 
@@ -390,8 +393,6 @@ function Home() {
 
   const [currentGist, setCurrentGist] = useState(undefined);
 
-  // const feedRef = useRef();
-
   useEffect(() => {
     const loadQuestions = async () => {
       setIsLoading(true);
@@ -401,14 +402,6 @@ function Home() {
 
       setIsLoading(false);
     };
-
-    // feedRef.current.addEventListener("scroll", () => {
-    //   console.log(
-    //     window.innerHeight,
-    //     feedRef.current.clientHeight + feedRef.current.scrollTop ===
-    //       feedRef.current.scrollHeight
-    //   );
-    // });
 
     loadQuestions();
   }, [reload]);
@@ -442,6 +435,9 @@ function Home() {
       <Container>
         <Header>
           <Logo src={logo} onClick={handleReload} />
+          <FormSearch>
+            <Input id="search" label="pesquisar" type="Search" />
+          </FormSearch>
           <IconSignOut onClick={handleSignOut} />
         </Header>
         <Content>

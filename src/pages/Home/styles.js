@@ -26,6 +26,18 @@ export const Header = styled.header`
   box-shadow: 0px 1px 5px var(--darkGray);
 `;
 
+export const FormSearch = styled.form`
+  width: 40%;
+  min-width: 300px;
+  max-width: 500px;
+
+  border-radius: 4px;
+  text-align: center;
+
+  display: flex;
+  align-items: center;
+`;
+
 export const Content = styled.div`
   width: 1280px;
   padding-top: 60px;
