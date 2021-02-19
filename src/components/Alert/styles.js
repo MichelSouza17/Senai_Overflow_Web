@@ -5,7 +5,7 @@ export const Container = styled.div`
   top: 0;
   right: 0;
 
-  width: 300px;
+  width: 0px;
   height: 80px;
   margin: 10px;
 
@@ -13,7 +13,7 @@ export const Container = styled.div`
 
   border-radius: 4px;
   background-color: ${(props) =>
-    props.type === "error" ? "#d90429cc" : "#04d929cc"};
+    props.type === "error" ? "#d90429aa" : "#04d929aa"};
 
   white-space: nowrap;
   overflow: hidden;
@@ -31,7 +31,7 @@ export const Container = styled.div`
   > span {
     position: absolute;
     top: 5px;
-    right: 5px;
+    right: 10px;
 
     font-size: 20px;
 
@@ -39,7 +39,7 @@ export const Container = styled.div`
     transition: 0.2s;
 
     :hover {
-      color: var(--primary);
+      color: var(--dark);
     }
   }
 `;

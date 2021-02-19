@@ -1,9 +1,9 @@
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Home from "./pages/Home";
 import { isSignedIn } from "./services/security";
-
-const { BrowserRouter, Switch, Route, Redirect } = require("react-router-dom");
 
 function PrivateRoute({ children, ...rest }) {
   if (isSignedIn()) {

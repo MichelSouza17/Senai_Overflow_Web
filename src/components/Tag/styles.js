@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Chip = styled.article`
+export const Container = styled.article`
   width: fit-content;
   padding: 2px 10px;
   display: flex;

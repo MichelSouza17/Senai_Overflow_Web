@@ -16,7 +16,7 @@ export const Container = styled.div`
   > label {
     position: absolute;
     left: 10px;
-    top: 0;
+    top: 0px;
     display: flex;
     align-items: center;
 

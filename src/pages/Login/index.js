@@ -1,12 +1,12 @@
-import { Container, FormLogin, Header, Body, Button } from "./styles";
+import { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import Alert from "../../components/Alert";
 import Input from "../../components/Input";
+import Loading from "../../components/Loading";
 
 import { api } from "../../services/api";
-import { Link, useHistory } from "react-router-dom";
-import { useState } from "react";
 import { signIn } from "../../services/security";
-import Loading from "../../components/Loading";
-import Alert from "../../components/Alert";
+import { Container, FormLogin, Header, Body, Button } from "./styles";
 
 function Login() {
   const history = useHistory();
@@ -51,7 +51,7 @@ function Login() {
       <Container>
         <FormLogin onSubmit={handleSubmit}>
           <Header>
-            <h1>BEM VINDO AO SENAI OVERFLOW</h1>
+            <h1>BEM VINDO AO SENAIOVERFLOW</h1>
             <h2>O SEU PORTAL DE RESPOSTAS</h2>
           </Header>
           <Body>
@@ -72,9 +72,7 @@ function Login() {
               required
             />
             <Button>Entrar</Button>
-            <Link to="/register">
-              Ou se já tem cadastro, clique aqui para entrar
-            </Link>
+            <Link to="/register"> Ou clique aqui para se cadastrar</Link>
           </Body>
         </FormLogin>
       </Container>

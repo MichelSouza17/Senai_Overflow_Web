@@ -1,11 +1,11 @@
-import { Chip } from "./styles";
+import { Container } from "./styles";
 
 function Tag({ info, handleClose }) {
   return (
-    <Chip>
+    <Container>
       {info}
       <span onClick={handleClose}>&times;</span>
-    </Chip>
+    </Container>
   );
 }
 

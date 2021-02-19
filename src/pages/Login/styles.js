@@ -31,16 +31,16 @@ export const Container = styled.div`
 `;
 
 const loginAnimation = keyframes`
-0%{
-  top: -250px;
-  opacity: 0;
-  transform: scale(0.01) rotate(90deg);
-}
-100%{
-  top: 0px;
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
+  0%{
+    top: -250px;
+    opacity: 0;
+    transform: scale(0.01) rotate(90deg);
+  }
+  100%{
+    top: 0px;
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
 `;
 
 export const FormLogin = styled.form`
@@ -77,7 +77,7 @@ export const Header = styled.header`
   }
 
   > h2 {
-    font-size: 12px;
+    font-size: 18px;
     text-align: center;
   }
 `;

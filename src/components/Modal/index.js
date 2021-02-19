@@ -1,5 +1,4 @@
-import "./styles";
-import { Overlay, ModalContainer } from "./styles";
+import { ModalContainer, Overlay } from "./styles";
 
 function Modal({ title, children, handleClose }) {
   return (

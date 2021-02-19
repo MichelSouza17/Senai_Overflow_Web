@@ -1,9 +1,9 @@
 import styled, { keyframes } from "styled-components";
 
 const spin = keyframes`
-100%{
+  100%{
     transform: rotate(360deg);
-}
+  }
 `;
 
 export const Container = styled.div`
